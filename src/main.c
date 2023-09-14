@@ -12,57 +12,76 @@
 
 #include "../includes/philosophers.h"
 
-int	checking_input(char **argv)
+int	init_philos(t_info *info)
 {
-	int	index;
-	int	counter;
+	int	i;
 
-	index = 1;
-	while (argv[index])
+	i = 0;
+	info->philosopher = malloc(sizeof(t_philo) * info->number_of_philo);
+	if (!info->philosopher)
+		return (FALSE);
+	while (i < info->number_of_philo)
 	{
-		counter = 0;
-		while (argv[index][counter])
-		{
-			if (argv[index][counter] == ' ')
-			{
-				counter++;
-				continue ;
-			}
-			if (argv[index][counter] < 48 || argv[index][counter] > 57)
-				return (error_msg(RED"Error with Input, try again!", NULL));
-			counter++;
-		}
-		index++;
+		info->philosopher[i].id = i + 1;
+		info->philosopher[i].left_fork = &info->fork_mutex[i];
+		info->philosopher[i].right_fork = 
+			&info->fork_mutex[(i + 1) % info->number_of_philo];
+		info->philosopher[i].data = info;
+		info->philosopher[i].time_to_die = info->time_to_die;
+		info->philosopher[i].time_to_sleep = info->time_to_sleep;
+		info->philosopher[i].time_to_eat = info->time_to_eat;
+		info->philosopher[i].last_eat = 0;
+		info->philosopher[i].is_eating = 0;
+		info->philosopher[i].eat_counter = 0;
+		i++;
 	}
-	return (0);
+	return (TRUE);
 }
 
-int	single_philo(t_info *info)
+int	create_mutex(t_info *info)
 {
-	info->start_time = get_millisec();
-	if (pthread_create(&info->thread_id[0], NULL, &thread_routine, &info->philosopher[0]) != 0)
-		return (error_msg(RED"Problem creating the single thread", info));
-	pthread_detach(info->thread_id[0]);
-	while (info->dead == 0)
-		ft_usleep(1);
-	end_routine(info);
-	return (0);
+	int	i;
+
+	i = -1;
+	info->fork_mutex = malloc(sizeof(pthread_mutex_t) * info->number_of_philo);
+	if (!info->fork_mutex)
+		return (FALSE);
+	while (++i < info->number_of_philo)
+		pthread_mutex_init(&info->fork_mutex[i], NULL);
+	pthread_mutex_init(&info->lock, NULL);
+	return (TRUE);
 }
 
-int main(int argc, char **argv)
+int	create_struct(t_info *info, char **argv)
 {
-    t_info	info;
+	info->number_of_philo = ft_atoi(argv[1]);
+	info->time_to_die = ft_atoi(argv[2]);
+	info->time_to_eat = ft_atoi(argv[3]);
+	info->time_to_sleep = ft_atoi(argv[4]);
+	if (argv[5])
+		info->number_of_meals = ft_atoi(argv[5]);
+	else
+		info->number_of_meals = -1;
+	info->dead = 0;
+	if (create_mutex(info) == FALSE)
+		return (FALSE);
+	if (init_philos(info) == FALSE)
+		return (FALSE);
+	return (TRUE);
+}
 
-    if (argc < 5 || argc > 6)
-        return(error_msg(RED"Problem with n of arguments", NULL));
-    if (checking_input(argv) != 0)
-        return(error_msg(RED"Problem with content of arguments", NULL));
-	if (program_init(&info, argv, argc) != 0)
-		return(error_msg(RED"Problem Inserting input into Program data", NULL));
-	if (info.number_of_philo == 1)
-		return(single_philo(&info));
-	if (start_threads(&info) != 0)
-		return(error_msg(RED"error with thread creation", NULL));
-	end_routine(&info);
-	return (0);
+int	main(int argc, char **argv)
+{
+	t_info	info;
+
+	if (check_arguments(argc, argv))
+	{
+		if (create_struct(&info, argv))
+		{
+			start_routine(&info);
+			start_monitor(&info);
+			thread_join(&info);
+			free_philo(&info);
+		}
+	}
 }

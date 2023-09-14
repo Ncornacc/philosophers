@@ -24,85 +24,94 @@
 # define CYAN "\033[0;96m"
 
 /* DEFINED USER MESSAGES */
-# define DIED "died"
-# define EATING "is eating"
-# define THINKING "is thinking"
-# define SLEEPING "is sleeping"
-# define TAKE_FORKS "has taken a fork"
+# define TRUE 		1
+# define ERROR		0
+# define FALSE		0
+# define DIED 		"died"
+# define EATING 	"is eating"
+# define THINKING 	"is thinking"
+# define SLEEPING 	"is sleeping"
+# define TAKE_FORKS	"has taken a fork"
 
 /* INCLUDES LIBRARIES */
 # include <stdlib.h>
 # include <stdio.h>
 # include <unistd.h>
 # include <pthread.h>/* For pthread Functions */
-# include<sys/time.h>/* gettimeofday */
-# include <stdint.h>/* uint64_t*/
+# include <sys/time.h>/* gettimeofday */
+# include <limits.h>
 
 /* STRUCT */
 
 typedef struct s_philosophers
 {
 	struct s_info		*data;
-	pthread_t			thread_1;
-	pthread_mutex_t		lock;
+	pthread_t			thread_id;
 	pthread_mutex_t		*left_fork;
 	pthread_mutex_t		*right_fork;
-	uint64_t			time_to_die;
+	int					time_to_die;
+	int					time_to_sleep;
+	int					time_to_eat;
 	int					id;
+	int					last_eat;
 	int					eat_counter;
-	int					status;
 	int					is_eating;
 }	t_philo;
 
 typedef struct s_info
 {
-	int				number_of_philo;
-	int				number_of_meals;
-	int				dead;
-	int				finished;
-	t_philo			*philosopher;
-	pthread_t		*thread_id;
-	pthread_mutex_t	lock;
-	pthread_mutex_t	unlock;
-	pthread_mutex_t	*forks;
-	u_int64_t		start_time;
-	u_int64_t		eat_time;
-	u_int64_t		sleep_time;
-	u_int64_t		death_time;
+	int					number_of_philo;
+	int					time_to_die;
+	int					time_to_sleep;
+	int					time_to_eat;
+	int					number_of_meals;
+	int					dead;
+	int					start_time;
+	t_philo				*philosopher;
+	pthread_mutex_t		*fork_mutex;
+	pthread_mutex_t		lock;
+	pthread_mutex_t		*left_fork;
+	pthread_mutex_t		*right_fork;
 }	t_info;
 
 
 /*------------FUNCTIONS---------- */
 
+// INIT FUNC
+int		create_struct(t_info *info, char **argv);
+int		init_philos(t_info *info);
+int		create_mutex(t_info *info);
+
+// Arguments Func
+int		arguments_number(int argc);
+int		arguments_content(char **argv);
+int		check_arguments(int argc, char **argv);
+int		is_numeric(char *str);
+int		check(int num);
+int		limits_check(char *str);
+int		limits(char **argv);
+void	print_syntax(void);
+void	print_error(void);
+
 // UTILS
-int	checking_input(char **argv);
-int	error_msg(char *str, t_info *info);
-int	ft_usleep(useconds_t time);
-int	ft_atoi(const char *nptr);
-int	ft_strcmp(char *s1, char *s2);
-u_int64_t	get_millisec(void);
+int		ft_atoi(const char *str);
+long	ft_atoi_long(const char *str);
+int		get_time(void);
+void	ft_sleep(int numb, t_philo *philo);
+void	print_msg(char *str, t_philo *philo);
 
-// FREE
-void end_routine(t_info *info);
-void delete_info(t_info *info);
-
-// INITIALIZATION
-int program_init(t_info *info, char **argv, int argc);
-int struct_init(t_info *info, char **argv, int argc);
-int pointer_alloc(t_info *info);
-int forks_init(t_info *info);
-void philosophers_init(t_info *info);
-
-// THREADS
-int	start_threads(t_info *info);
-void	*thread_check(void *info_pointer);
-void	*thread_routine(void *philosopher_p);
-void 	*thread_control(void *philosopher_p);
-
-// ACTIONS
-void    eat_action(t_philo *philos);
-void	write_action(char *str, t_philo *philos);
-void	take_forks(t_philo *philos);
-void	leave_forks(t_philo *philos);
+//Actions Func
+void	start_routine(t_info *info);
+void	*philos_routine(void *args);
+void	*start_monitor(void *args);
+void	thread_join(t_info *info);
+void	free_philo(t_info *info);
+int		philos_dead(t_philo *philo);
+void	philos_eating(t_philo *philos);
+void	philos_sleeping(t_philo *philos);
+void	philos_thinking(t_philo *philos);
+int		philos_forks(t_philo *philo);
+int		is_dead(t_info *info);
+int		has_eaten(t_philo *philo);
 
 #endif

@@ -10,12 +10,12 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME	:=	philosophers
+NAME	:=	philo
 
 CC		:=	gcc
 HEADER	:=	includes/philosophers.h
 HEAD	:= -Iincludes
-FLAGS	:=	-Wall -Werror -Wextra -fsanitize=thread -g
+FLAGS	:=	-Wall -Werror -Wextra #-fsanitize=thread -g
 
 RM		:=	rm	-rf
 
@@ -24,7 +24,7 @@ RM		:=	rm	-rf
 OBJ_DIR	:=	obj/
 SRC_DIR	:=	src/
 
-FILE	:=	main free initialization threads utils actions
+FILE	:=	main actions actions_utils arguments arguments_utils monitoring utils
 
 SRC		:=	${addprefix ${SRC_DIR}, ${addsuffix .c, ${FILE}}}
 OBJ		:=	${addprefix ${OBJ_DIR}, ${addsuffix .o, ${FILE}}}
@@ -40,7 +40,7 @@ ${OBJ_DIR}%.o: ${SRC_DIR}%.c ${HEADER}
 
 ${NAME}: ${OBJ}
 	@${CC} ${FLAGS} ${HEAD} ${OBJ} -o ${NAME}
-	@echo "${GREEN} so_long compiled!${DEF_COLOR}"
+	@echo "${GREEN} philosophers compiled!${DEF_COLOR}"
 
 clean:
 	${RM} ${OBJ_DIR}
