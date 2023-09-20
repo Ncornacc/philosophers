@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   philosophers.h                                     :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ncornacc <ncornacc@student.codam.nl>         +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/07/17 11:21:46 by ncornacc      #+#    #+#                 */
-/*   Updated: 2023/07/19 11:40:17 by ncornacc      ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   philosophers.h                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ncornacc <ncornacc@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/17 11:21:46 by ncornacc          #+#    #+#             */
+/*   Updated: 2023/09/19 15:52:20 by ncornacc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # define YELLOW "\033[0;93m"
 # define BLUE "\033[0;94m"
 # define MAGENTA "\033[0;95m"
+# define PINK "\e[0;38;5;199m"
 # define CYAN "\033[0;96m"
 
 /* DEFINED USER MESSAGES */
@@ -43,75 +44,47 @@
 
 /* STRUCT */
 
-typedef struct s_philosophers
+typedef struct s_forks
 {
-	struct s_info		*data;
-	pthread_t			thread_id;
-	pthread_mutex_t		*left_fork;
-	pthread_mutex_t		*right_fork;
-	int					time_to_die;
-	int					time_to_sleep;
-	int					time_to_eat;
-	int					id;
-	int					last_eat;
-	int					eat_counter;
-	int					is_eating;
+	int	right_fork;
+	int	left_fork;
+}	t_fork;
+
+typedef struct s_arguments
+{
+	int	number_of_philo;
+	int	time_to_die;
+	int	time_to_eat;
+	int	time_to_sleep;
+	int	num_time_to_eat;
+}	t_args;
+
+typedef struct s_philosopher
+{
+	int			eat_time_counter;
+	int			id;
+	long long	time_to_die;
+	t_fork		fork;
+	pthread_t	thread;
 }	t_philo;
 
-typedef struct s_info
+typedef struct s_informations
 {
-	int					number_of_philo;
-	int					time_to_die;
-	int					time_to_sleep;
-	int					time_to_eat;
-	int					number_of_meals;
-	int					dead;
-	int					start_time;
-	t_philo				*philosopher;
-	pthread_mutex_t		*fork_mutex;
-	pthread_mutex_t		lock;
-	pthread_mutex_t		*left_fork;
-	pthread_mutex_t		*right_fork;
+	int				number_of_threads;
+	int				is_philo_dead;
+	long long		time;
+	t_philo			*philo;
+	t_arguments		args;
+	pthread_t		monitor;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	print;		
 }	t_info;
 
 
 /*------------FUNCTIONS---------- */
 
-// INIT FUNC
-int		create_struct(t_info *info, char **argv);
-int		init_philos(t_info *info);
-int		create_mutex(t_info *info);
-
-// Arguments Func
-int		arguments_number(int argc);
-int		arguments_content(char **argv);
-int		check_arguments(int argc, char **argv);
-int		is_numeric(char *str);
-int		check(int num);
-int		limits_check(char *str);
-int		limits(char **argv);
-void	print_syntax(void);
-void	print_error(void);
-
-// UTILS
-int		ft_atoi(const char *str);
-long	ft_atoi_long(const char *str);
-int		get_time(void);
-void	ft_sleep(int numb, t_philo *philo);
-void	print_msg(char *str, t_philo *philo);
-
-//Actions Func
-void	start_routine(t_info *info);
-void	*philos_routine(void *args);
-void	*start_monitor(void *args);
-void	thread_join(t_info *info);
-void	free_philo(t_info *info);
-int		philos_dead(t_philo *philo);
-void	philos_eating(t_philo *philos);
-void	philos_sleeping(t_philo *philos);
-void	philos_thinking(t_philo *philos);
-int		philos_forks(t_philo *philo);
-int		is_dead(t_info *info);
-int		has_eaten(t_philo *philo);
+int	initialize_struct(int argc, char **argv, t_info *info);
+int	check_arguments(int argc, char **argv, t_info *info);
+int	ft_atoi(char *str);
 
 #endif

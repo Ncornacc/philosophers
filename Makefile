@@ -24,7 +24,7 @@ RM		:=	rm	-rf
 OBJ_DIR	:=	obj/
 SRC_DIR	:=	src/
 
-FILE	:=	main actions actions_utils arguments arguments_utils monitoring utils
+FILE	:=	actions errors forks threads time main philos utils routine
 
 SRC		:=	${addprefix ${SRC_DIR}, ${addsuffix .c, ${FILE}}}
 OBJ		:=	${addprefix ${OBJ_DIR}, ${addsuffix .o, ${FILE}}}
