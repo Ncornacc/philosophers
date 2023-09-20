@@ -50,7 +50,7 @@ int sleeping(t_info *info, int index)
 
 int thinking(t_info *info, int index)
 {
-    if (print_philo(info, info->philo[index].id, MAGENTA, THINKING) == FALSE)
+    if (print_philo(info, info->philo[index].id, CYAN, THINKING) == FALSE)
         return (FALSE);
     return (TRUE);
 }
