@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   philosophers.c                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ncornacc <ncornacc@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/19 15:54:11 by ncornacc          #+#    #+#             */
-/*   Updated: 2023/09/19 16:12:56 by ncornacc         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   philosophers.c                                     :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ncornacc <ncornacc@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/09/19 15:54:11 by ncornacc      #+#    #+#                 */
+/*   Updated: 2023/09/20 11:09:21 by ncornacc      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 void	initialize_philos_struct(t_info *info, int index, int counter)
 {
 	info->philo[index].id = index + 1;
-	info->philo[index].num_time_to_eat = 0;
+	info->philo[index].eat_time_counter = 0;
 	info->philo[index].time_to_die = 0;
-	info->philo[index].fork.left_fork = index;
-	info->philo[index].fork.right_fork = counter;
+	info->philo[index].fork.left = index;
+	info->philo[index].fork.right = counter;
 }
 
 int	philosophers_born(t_info *info)

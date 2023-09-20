@@ -6,7 +6,7 @@
 #    By: ncornacc <marvin@codam.nl>                   +#+                      #
 #                                                    +#+                       #
 #    Created: 2023/03/16 14:29:04 by ncornacc      #+#    #+#                  #
-#    Updated: 2023/07/19 13:39:23 by ncornacc      ########   odam.nl          #
+#    Updated: 2023/09/20 11:18:11 by ncornacc      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,7 @@ RM		:=	rm	-rf
 OBJ_DIR	:=	obj/
 SRC_DIR	:=	src/
 
-FILE	:=	actions errors forks threads time main philos utils routine
+FILE	:=	 threads time main philosophers routine arguments actions
 
 SRC		:=	${addprefix ${SRC_DIR}, ${addsuffix .c, ${FILE}}}
 OBJ		:=	${addprefix ${OBJ_DIR}, ${addsuffix .o, ${FILE}}}

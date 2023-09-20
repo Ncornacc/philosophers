@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   philosophers.h                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ncornacc <ncornacc@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/17 11:21:46 by ncornacc          #+#    #+#             */
-/*   Updated: 2023/09/19 15:52:20 by ncornacc         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   philosophers.h                                     :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ncornacc <ncornacc@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/07/17 11:21:46 by ncornacc      #+#    #+#                 */
+/*   Updated: 2023/09/20 11:15:45 by ncornacc      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 # define TAKE_FORKS	"has taken a fork"
 
 /* INCLUDES LIBRARIES */
+# include <string.h>
 # include <stdlib.h>
 # include <stdio.h>
 # include <unistd.h>
@@ -46,9 +47,9 @@
 
 typedef struct s_forks
 {
-	int	right_fork;
-	int	left_fork;
-}	t_fork;
+	int	left;
+	int	right;
+}	t_forks;
 
 typedef struct s_arguments
 {
@@ -64,8 +65,8 @@ typedef struct s_philosopher
 	int			eat_time_counter;
 	int			id;
 	long long	time_to_die;
-	t_fork		fork;
 	pthread_t	thread;
+	t_forks		fork;
 }	t_philo;
 
 typedef struct s_informations
@@ -74,7 +75,7 @@ typedef struct s_informations
 	int				is_philo_dead;
 	long long		time;
 	t_philo			*philo;
-	t_arguments		args;
+	t_args			args;
 	pthread_t		monitor;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print;		
@@ -83,8 +84,41 @@ typedef struct s_informations
 
 /*------------FUNCTIONS---------- */
 
+//ARGUMENT CHECK FUNCTIONS
 int	initialize_struct(int argc, char **argv, t_info *info);
 int	check_arguments(int argc, char **argv, t_info *info);
-int	ft_atoi(char *str);
+
+
+// PHILOSOPHER FUNCTIONS
+void	initialize_philos_struct(t_info *info, int index, int counter);
+int		philosophers_born(t_info *info);
+int		one_philo(t_info *info);
+void    *philos_routine(void *args);
+int		execute_routine(t_info *info, int index);
+void    *philos_monitor(void *args);
+void	forks_unlock(t_info *info);
+int		forks_born(t_info *info);
+int		print_philo(t_info *info, int id, char *color, char *message);
+
+// UTILS FUNCTION
+int			ft_atoi(char *str);
+long long	get_delta(long long time);
+void		execute_action(long long time);
+long long	get_time(void);
+void   		free_philo(t_info *info);
+
+// THREAD FUNCTIONS
+int threads_born(t_info *info);
+int threads_dead(t_info *info);
+int threads_join(t_info *info);
+
+// ACTION FUNCTIONS
+int sleeping(t_info *info, int index);
+int leave_forks(t_info *info, int index);
+int eating(t_info *info, int index);
+int thinking(t_info *info, int index);
+int philos_dead(t_info *info, int *index);
+
+
 
 #endif
